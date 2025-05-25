@@ -8,6 +8,6 @@ export const getTypeOrmConfig = (configService: ConfigService): TypeOrmModuleOpt
   username: configService.get<string>('POSTGRES_USER'),
   password: configService.get<string>('POSTGRES_PASSWORD'),
   database: configService.get<string>('POSTGRES_DB'),
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
+  entities: [__dirname + '/../**/*.entity.js'],
   synchronize: configService.get<string>('NODE_ENV') !== 'production',
 });
