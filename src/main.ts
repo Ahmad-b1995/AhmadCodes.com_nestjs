@@ -10,12 +10,11 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('AhmadCodes.com')
-    .setDescription('AhmadCodes.com API description')
+    .setDescription('AhmadCodes.com API description. <a href="/api-json" target="_blank" style="color: #007bff; text-decoration: none;">View/Download Swagger JSON</a>')
     .setVersion('1.0')
-    .addTag('cats')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, { swaggerOptions: { url: '/api-json' } });
 
   await app.listen(port);
 }
