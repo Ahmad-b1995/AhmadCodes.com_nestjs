@@ -4,10 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
-  
-  // Log all environment variables at startup
+  // Log all environment variables BEFORE creating the app
   console.log('=== ENVIRONMENT VARIABLES ===');
   console.log('NODE_ENV:', process.env.NODE_ENV);
   console.log('APP_PORT:', process.env.APP_PORT);
@@ -21,6 +18,9 @@ async function bootstrap() {
   console.log('DATABASE_IDLE_TIMEOUT:', process.env.DATABASE_IDLE_TIMEOUT);
   console.log('DATABASE_MAX_CONNECTIONS:', process.env.DATABASE_MAX_CONNECTIONS);
   console.log('==============================');
+  
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
   
   const port = configService.get<number>('APP_PORT') || 3100;
 
