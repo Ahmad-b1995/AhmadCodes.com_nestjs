@@ -1,5 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
+export interface ArticleImage {
+  alt: string;
+  src: string;
+}
+
 @Entity('articles')
 export class Article {
   @PrimaryGeneratedColumn()
@@ -8,11 +13,11 @@ export class Article {
   @Column()
   title: string;
 
-  @Column()
+  @Column('text')
   content: string;
 
-  @Column()
-  author: string;
+  @Column('json')
+  image: ArticleImage;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

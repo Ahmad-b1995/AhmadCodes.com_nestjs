@@ -6,11 +6,11 @@ export const ArticleExamples = {
       description: 'Create a new blog article',
       value: {
         title: 'Getting Started with NestJS',
-        content: 'NestJS is a progressive Node.js framework for building efficient and scalable server-side applications...',
-        excerpt: 'Learn the basics of NestJS framework',
-        tags: ['nestjs', 'nodejs', 'backend'],
-        published: true,
-        featured: false
+        content: 'NestJS is a progressive Node.js framework for building efficient and scalable server-side applications. It uses modern JavaScript, is built with TypeScript and combines elements of OOP (Object Oriented Programming), FP (Functional Programming), and FRP (Functional Reactive Programming).',
+        image: {
+          alt: 'NestJS framework tutorial cover image',
+          src: 'https://example.com/images/nestjs-tutorial.jpg'
+        }
       }
     },
     tutorial: {
@@ -18,11 +18,11 @@ export const ArticleExamples = {
       description: 'Create a new tutorial article',
       value: {
         title: 'Complete Guide to TypeScript',
-        content: 'TypeScript is a strongly typed programming language that builds on JavaScript...',
-        excerpt: 'Master TypeScript with this comprehensive guide',
-        tags: ['typescript', 'javascript', 'programming'],
-        published: false,
-        featured: true
+        content: 'TypeScript is a strongly typed programming language that builds on JavaScript, giving you better tooling at any scale. This comprehensive guide will teach you everything you need to know about TypeScript.',
+        image: {
+          alt: 'TypeScript programming guide illustration',
+          src: 'https://example.com/images/typescript-guide.jpg'
+        }
       }
     }
   },
@@ -34,18 +34,18 @@ export const ArticleExamples = {
       description: 'Update article information',
       value: {
         title: 'Advanced NestJS Concepts',
-        content: 'Updated content with advanced concepts...',
-        excerpt: 'Deep dive into advanced NestJS features',
-        tags: ['nestjs', 'advanced', 'backend'],
-        published: true,
-        featured: true
+        content: 'Updated content with advanced concepts including guards, interceptors, pipes, and custom decorators for building robust applications.',
+        image: {
+          alt: 'Advanced NestJS concepts tutorial',
+          src: 'https://example.com/images/advanced-nestjs.jpg'
+        }
       }
     },
-    publish: {
-      summary: 'Publish article',
-      description: 'Publish a draft article',
+    partialUpdate: {
+      summary: 'Partial update',
+      description: 'Update only specific fields',
       value: {
-        published: true
+        title: 'Updated Article Title'
       }
     }
   }
@@ -62,13 +62,14 @@ export const ArticleResponses = {
         id: { type: 'number', example: 1 },
         title: { type: 'string', example: 'Getting Started with NestJS' },
         content: { type: 'string', example: 'NestJS is a progressive Node.js framework...' },
-        excerpt: { type: 'string', example: 'Learn the basics of NestJS framework' },
-        tags: { type: 'array', items: { type: 'string' }, example: ['nestjs', 'nodejs', 'backend'] },
-        published: { type: 'boolean', example: true },
-        featured: { type: 'boolean', example: false },
-        authorId: { type: 'number', example: 1 },
-        createdAt: { type: 'string', format: 'date-time' },
-        updatedAt: { type: 'string', format: 'date-time' }
+        image: {
+          type: 'object',
+          properties: {
+            alt: { type: 'string', example: 'NestJS framework tutorial cover image' },
+            src: { type: 'string', example: 'https://example.com/images/nestjs-tutorial.jpg' }
+          }
+        },
+        createdAt: { type: 'string', format: 'date-time' }
       }
     }
   },
@@ -84,13 +85,15 @@ export const ArticleResponses = {
         properties: {
           id: { type: 'number', example: 1 },
           title: { type: 'string', example: 'Getting Started with NestJS' },
-          excerpt: { type: 'string', example: 'Learn the basics of NestJS framework' },
-          tags: { type: 'array', items: { type: 'string' }, example: ['nestjs', 'nodejs', 'backend'] },
-          published: { type: 'boolean', example: true },
-          featured: { type: 'boolean', example: false },
-          authorId: { type: 'number', example: 1 },
-          createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' }
+          content: { type: 'string', example: 'NestJS is a progressive Node.js framework...' },
+          image: {
+            type: 'object',
+            properties: {
+              alt: { type: 'string', example: 'NestJS framework tutorial cover image' },
+              src: { type: 'string', example: 'https://example.com/images/nestjs-tutorial.jpg' }
+            }
+          },
+          createdAt: { type: 'string', format: 'date-time' }
         }
       }
     }
@@ -106,13 +109,14 @@ export const ArticleResponses = {
         id: { type: 'number', example: 1 },
         title: { type: 'string', example: 'Getting Started with NestJS' },
         content: { type: 'string', example: 'NestJS is a progressive Node.js framework...' },
-        excerpt: { type: 'string', example: 'Learn the basics of NestJS framework' },
-        tags: { type: 'array', items: { type: 'string' }, example: ['nestjs', 'nodejs', 'backend'] },
-        published: { type: 'boolean', example: true },
-        featured: { type: 'boolean', example: false },
-        authorId: { type: 'number', example: 1 },
-        createdAt: { type: 'string', format: 'date-time' },
-        updatedAt: { type: 'string', format: 'date-time' }
+        image: {
+          type: 'object',
+          properties: {
+            alt: { type: 'string', example: 'NestJS framework tutorial cover image' },
+            src: { type: 'string', example: 'https://example.com/images/nestjs-tutorial.jpg' }
+          }
+        },
+        createdAt: { type: 'string', format: 'date-time' }
       }
     }
   },
@@ -127,12 +131,14 @@ export const ArticleResponses = {
         id: { type: 'number', example: 1 },
         title: { type: 'string', example: 'Advanced NestJS Concepts' },
         content: { type: 'string', example: 'Updated content with advanced concepts...' },
-        excerpt: { type: 'string', example: 'Deep dive into advanced NestJS features' },
-        tags: { type: 'array', items: { type: 'string' }, example: ['nestjs', 'advanced', 'backend'] },
-        published: { type: 'boolean', example: true },
-        featured: { type: 'boolean', example: true },
-        authorId: { type: 'number', example: 1 },
-        updatedAt: { type: 'string', format: 'date-time' }
+        image: {
+          type: 'object',
+          properties: {
+            alt: { type: 'string', example: 'Advanced NestJS concepts tutorial' },
+            src: { type: 'string', example: 'https://example.com/images/advanced-nestjs.jpg' }
+          }
+        },
+        createdAt: { type: 'string', format: 'date-time' }
       }
     }
   }

@@ -16,7 +16,7 @@ export class ArticleService {
     const article = this.articleRepository.create({
       title: newArticle.title,
       content: newArticle.content,
-      author: newArticle.author,
+      image: newArticle.image,
     });
     return this.articleRepository.save(article);
   }
@@ -38,6 +38,7 @@ export class ArticleService {
     Object.assign(article, updateArticle);
     return this.articleRepository.save(article);
   }
+  
   async remove(id: number): Promise<void> {
     const article = await this.findOne(id);
     await this.articleRepository.remove(article);

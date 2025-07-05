@@ -24,8 +24,8 @@ export class CreateArticlesTable1640000000002 implements MigrationInterface {
             type: 'text',
           },
           {
-            name: 'author',
-            type: 'varchar',
+            name: 'image',
+            type: 'json',
           },
           {
             name: 'createdAt',
