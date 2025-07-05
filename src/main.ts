@@ -38,13 +38,52 @@ async function bootstrap() {
     }
   }
   
+  // Enhanced CORS configuration for bolt.new compatibility
   app.enableCors({
-    origin: origins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      
+      // If origins is true, allow all
+      if (origins === true) return callback(null, true);
+      
+      // Check if origin is in allowed list
+      if (Array.isArray(origins)) {
+        // Special handling for bolt.new variations
+        if (origin.includes('bolt.new') || origin.includes('stackblitz.com')) {
+          return callback(null, true);
+        }
+        
+        if (origins.includes(origin)) {
+          return callback(null, true);
+        }
+        
+        // Log rejected origins for debugging
+        console.log(`CORS: Rejected origin: ${origin}`);
+        return callback(new Error('Not allowed by CORS'));
+      }
+      
+      return callback(null, true);
+    },
     credentials: corsCredentials,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
-    exposedHeaders: ['X-Total-Count', 'X-Page-Count'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+    allowedHeaders: [
+      'Content-Type', 
+      'Authorization', 
+      'Accept', 
+      'X-Requested-With',
+      'Origin',
+      'X-Auth-Token',
+      'Access-Control-Allow-Origin',
+      'Access-Control-Allow-Headers',
+      'Access-Control-Allow-Methods',
+      'Cache-Control',
+      'Pragma'
+    ],
+    exposedHeaders: ['X-Total-Count', 'X-Page-Count', 'Authorization'],
     maxAge: 86400, // 24 hours
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   });
   
   console.log('=== CORS CONFIGURATION ===');
