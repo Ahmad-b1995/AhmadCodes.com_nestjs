@@ -23,7 +23,9 @@ export const getTypeOrmConfig = (configService: ConfigService): TypeOrmModuleOpt
     password: configService.get<string>('POSTGRES_PASSWORD'),
     database: configService.get<string>('POSTGRES_DB'),
     entities: [isProduction ? __dirname + '/../**/*.entity.js' : __dirname + '/../**/*.entity.{ts,js}'],
-    synchronize: !isProduction,
+    migrations: [isProduction ? __dirname + '/../migrations/*.js' : __dirname + '/../migrations/*.{ts,js}'],
+    synchronize: !isProduction, // Enable synchronize only for development
+    migrationsRun: isProduction, // Auto-run migrations in production
     ssl: configService.get<string>('DATABASE_SSL') === 'true' ? { rejectUnauthorized: false } : false,
     logging: ['error', 'warn', 'migration'],
     extra: {
