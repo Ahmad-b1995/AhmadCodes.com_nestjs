@@ -1,62 +1,230 @@
-# Authentication System
+# Authentication System Documentation
 
-This NestJS application includes a comprehensive authentication and authorization system with JWT tokens, role-based access control, and permission-based access control.
+## Overview
 
-## Features
+This NestJS application implements a comprehensive authentication and authorization system with the following features:
 
 - **JWT Authentication**: Secure token-based authentication
-- **Role-Based Access Control (RBAC)**: Users can have different roles (admin, editor, user)
+- **Role-Based Access Control (RBAC)**: Different user roles (admin, editor, user)
 - **Permission-Based Access Control**: Fine-grained permissions for specific actions
-- **Default Admin User**: Automatically created on application startup
+- **Configurable Default Admin User**: Admin credentials loaded from environment variables
 - **Password Hashing**: Secure password storage using bcrypt
 - **User Management**: Complete CRUD operations for user management
+- **CORS Support**: Configurable Cross-Origin Resource Sharing
 
-## User Roles
+## User Roles and Permissions
 
-- **ADMIN**: Full access to all system features
+### Roles
+- **ADMIN**: Full system access with all permissions
 - **EDITOR**: Can manage articles and some user operations
 - **USER**: Basic user with limited permissions
 
-## Permissions
+### Permissions
+- `CREATE_ARTICLE`, `READ_ARTICLE`, `UPDATE_ARTICLE`, `DELETE_ARTICLE`
+- `CREATE_USER`, `READ_USER`, `UPDATE_USER`, `DELETE_USER`
+- `MANAGE_ROLES`, `MANAGE_PERMISSIONS`
 
-- `create_articles`: Create new articles
-- `read_articles`: Read articles
-- `update_articles`: Update existing articles
-- `delete_articles`: Delete articles
-- `manage_users`: Manage user accounts
-- `manage_roles`: Manage user roles and permissions
+## Environment Configuration
+
+### Required Environment Variables
+
+```env
+# Application Configuration
+APP_PORT=3000
+NODE_ENV=development
+
+# Database Configuration
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+POSTGRES_DB=your_database_name
+POSTGRES_USER=your_database_user
+POSTGRES_PASSWORD=your_database_password
+
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+# Default Admin User Configuration
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=admin123
+ADMIN_FIRST_NAME=Admin
+ADMIN_LAST_NAME=User
+
+# CORS Configuration
+CORS_ORIGIN=http://localhost:3000,http://localhost:3001,http://localhost:8080
+CORS_CREDENTIALS=true
+```
+
+## CORS Configuration
+
+The application supports flexible CORS configuration through environment variables:
+
+### CORS Options
+
+- **`CORS_ORIGIN`**: Allowed origins for cross-origin requests
+  - Use `*` to allow all origins (not recommended for production)
+  - Use comma-separated URLs for specific origins: `http://localhost:3000,https://yourdomain.com`
+  - Leave empty to allow all origins by default
+
+- **`CORS_CREDENTIALS`**: Whether to include credentials in CORS requests
+  - Set to `true` to allow cookies and authorization headers
+  - Set to `false` to disable credentials
+
+### CORS Features
+
+- **Configurable Origins**: Support for multiple specific origins or wildcard
+- **Credentials Support**: Enable/disable credential inclusion
+- **Standard Methods**: GET, POST, PUT, DELETE, PATCH, OPTIONS
+- **Security Headers**: Proper handling of Authorization and Content-Type headers
+- **Preflight Caching**: 24-hour cache for preflight requests
+
+### Example Configurations
+
+#### Development (Allow local development servers)
+```env
+CORS_ORIGIN=http://localhost:3000,http://localhost:3001,http://localhost:8080,http://127.0.0.1:3000
+CORS_CREDENTIALS=true
+```
+
+#### Production (Specific domains only)
+```env
+CORS_ORIGIN=https://yourdomain.com,https://www.yourdomain.com,https://app.yourdomain.com
+CORS_CREDENTIALS=true
+```
+
+#### Open API (Allow all origins - not recommended for production)
+```env
+CORS_ORIGIN=*
+CORS_CREDENTIALS=false
+```
 
 ## Default Admin User
 
-The system automatically creates a default admin user on startup:
-- **Email**: admin@example.com
-- **Password**: admin123
-- **Role**: admin
-- **Permissions**: All permissions
+The system automatically creates a default admin user on startup using environment variables:
 
-**⚠️ Important**: Change the default admin password in production!
+- **Email**: `ADMIN_EMAIL` (default: admin@example.com)
+- **Password**: `ADMIN_PASSWORD` (default: admin123)
+- **First Name**: `ADMIN_FIRST_NAME` (default: Admin)
+- **Last Name**: `ADMIN_LAST_NAME` (default: User)
+
+⚠️ **Important**: Change these values in your `.env` file, especially in production environments.
 
 ## API Endpoints
 
 ### Authentication
-- `POST /auth/login` - Login with email and password
-- `POST /auth/register` - Register a new user
-- `GET /auth/profile` - Get current user profile (requires authentication)
-- `POST /auth/logout` - Logout (client-side token removal)
+
+#### Login
+```bash
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "admin123"
+}
+```
+
+#### Register
+```bash
+POST /auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+```
+
+#### Get Profile
+```bash
+GET /auth/profile
+Authorization: Bearer <jwt_token>
+```
+
+#### Logout
+```bash
+POST /auth/logout
+Authorization: Bearer <jwt_token>
+```
 
 ### User Management (Admin/Editor only)
-- `GET /users` - List all users
-- `GET /users/:id` - Get user by ID
-- `POST /users` - Create new user (Admin only)
-- `PATCH /users/:id` - Update user (Admin only)
-- `DELETE /users/:id` - Delete user (Admin only)
-- `GET /users/profile` - Get own profile
-- `PATCH /users/profile` - Update own profile
-- `POST /users/change-password` - Change password
 
-## Usage Examples
+#### Get All Users
+```bash
+GET /users
+Authorization: Bearer <jwt_token>
+```
 
-### Login
+#### Get User by ID
+```bash
+GET /users/:id
+Authorization: Bearer <jwt_token>
+```
+
+#### Create User
+```bash
+POST /users
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+
+{
+  "email": "newuser@example.com",
+  "password": "password123",
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "role": "USER"
+}
+```
+
+#### Update User
+```bash
+PUT /users/:id
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+
+{
+  "firstName": "Updated Name",
+  "role": "EDITOR"
+}
+```
+
+#### Delete User
+```bash
+DELETE /users/:id
+Authorization: Bearer <jwt_token>
+```
+
+## Security Features
+
+- **Password Hashing**: All passwords are hashed using bcrypt with salt rounds of 10
+- **JWT Tokens**: Configurable expiration time (default: 24 hours)
+- **Role Guards**: Protect endpoints based on user roles
+- **Permission Guards**: Fine-grained access control
+- **User Status**: Users can be activated/deactivated
+- **Environment-based Configuration**: Sensitive data stored in environment variables
+
+## Database Schema
+
+### Users Table
+```sql
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR UNIQUE NOT NULL,
+  firstName VARCHAR NOT NULL,
+  lastName VARCHAR NOT NULL,
+  password VARCHAR NOT NULL,
+  role VARCHAR NOT NULL DEFAULT 'USER',
+  permissions TEXT[] DEFAULT '{}',
+  isActive BOOLEAN DEFAULT true,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+## Testing
+
+### Login Test
 ```bash
 curl -X POST http://localhost:3000/auth/login \
   -H "Content-Type: application/json" \
@@ -65,91 +233,42 @@ curl -X POST http://localhost:3000/auth/login \
 
 ### Access Protected Endpoint
 ```bash
+curl -X GET http://localhost:3000/auth/profile \
+  -H "Authorization: Bearer <your_jwt_token>"
+```
+
+### Test Role-Based Access
+```bash
+# This should fail with 403 for non-admin users
 curl -X GET http://localhost:3000/users \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: Bearer <non_admin_token>"
 ```
-
-### Register New User
-```bash
-curl -X POST http://localhost:3000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"user@example.com","firstName":"John","lastName":"Doe","password":"password123"}'
-```
-
-### Create User with Specific Role (Admin only)
-```bash
-curl -X POST http://localhost:3000/users \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_ADMIN_JWT_TOKEN" \
-  -d '{"email":"editor@example.com","firstName":"Editor","lastName":"User","password":"editor123","role":"editor","permissions":["create_articles","read_articles","update_articles"]}'
-```
-
-## Security Features
-
-- **Password Hashing**: All passwords are hashed using bcrypt
-- **JWT Tokens**: Stateless authentication with 24-hour expiration
-- **Role Guards**: Protect endpoints based on user roles
-- **Permission Guards**: Fine-grained access control
-- **User Status**: Users can be activated/deactivated
-
-## Environment Variables
-
-Add the following to your `.env` file:
-
-```env
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-```
-
-## Database Schema
-
-The system creates a `users` table with the following structure:
-- `id`: Primary key
-- `email`: Unique email address
-- `firstName`: User's first name
-- `lastName`: User's last name
-- `password`: Hashed password
-- `role`: User role (admin, editor, user)
-- `permissions`: Array of permissions
-- `isActive`: Boolean flag for user status
-- `createdAt`: Creation timestamp
-- `updatedAt`: Last update timestamp
-- `lastLoginAt`: Last login timestamp
-
-## Testing
-
-The authentication system has been tested with:
-- ✅ Default admin user creation
-- ✅ User login and JWT token generation
-- ✅ User registration
-- ✅ Role-based access control
-- ✅ Permission-based access control
-- ✅ Protected endpoint access
-- ✅ User profile management
-- ✅ User CRUD operations
-
-## Development
-
-To test the authentication system:
-
-1. Start the development server:
-   ```bash
-   npm run start:dev
-   ```
-
-2. Login with default admin:
-   ```bash
-   curl -X POST http://localhost:3000/auth/login \
-     -H "Content-Type: application/json" \
-     -d '{"email":"admin@example.com","password":"admin123"}'
-   ```
-
-3. Use the returned JWT token to access protected endpoints.
 
 ## Production Considerations
 
-1. **Change Default Admin Password**: Update the default admin credentials
-2. **Secure JWT Secret**: Use a strong, random JWT secret
-3. **HTTPS**: Always use HTTPS in production
-4. **Token Expiration**: Consider shorter token expiration times
-5. **Rate Limiting**: Implement rate limiting for authentication endpoints
-6. **Password Policies**: Enforce strong password requirements 
+1. **Environment Variables**: Ensure all sensitive data is properly configured in environment variables
+2. **JWT Secret**: Use a strong, randomly generated JWT secret
+3. **Default Admin**: Change default admin credentials immediately after deployment
+4. **HTTPS**: Always use HTTPS in production
+5. **Rate Limiting**: Consider implementing rate limiting for authentication endpoints
+6. **Database Security**: Use proper database security measures
+7. **Logging**: Implement proper logging for security events
+
+## Error Handling
+
+The system handles various error scenarios:
+- Invalid credentials (401 Unauthorized)
+- Insufficient permissions (403 Forbidden)
+- User not found (404 Not Found)
+- Duplicate email registration (409 Conflict)
+- Inactive user accounts (401 Unauthorized)
+
+## Development Setup
+
+1. Copy `.env.example` to `.env`
+2. Configure your database and JWT settings
+3. Set your desired admin credentials
+4. Run the application
+5. The default admin user will be created automatically
+
+The authentication system is now fully configurable and production-ready! 

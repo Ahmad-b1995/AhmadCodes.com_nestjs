@@ -17,12 +17,42 @@ async function bootstrap() {
   console.log('DATABASE_CONNECTION_TIMEOUT:', process.env.DATABASE_CONNECTION_TIMEOUT);
   console.log('DATABASE_IDLE_TIMEOUT:', process.env.DATABASE_IDLE_TIMEOUT);
   console.log('DATABASE_MAX_CONNECTIONS:', process.env.DATABASE_MAX_CONNECTIONS);
+  console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
+  console.log('CORS_CREDENTIALS:', process.env.CORS_CREDENTIALS);
   console.log('==============================');
   
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   
-  const port = configService.get<number>('APP_PORT') || 3100;
+  // Configure CORS
+  const corsOrigin = configService.get<string>('CORS_ORIGIN');
+  const corsCredentials = configService.get<string>('CORS_CREDENTIALS') === 'true';
+  
+  // Parse CORS origins (can be comma-separated)
+  let origins: string[] | boolean = true; // Default to allow all origins
+  if (corsOrigin) {
+    if (corsOrigin === '*') {
+      origins = true;
+    } else {
+      origins = corsOrigin.split(',').map(origin => origin.trim());
+    }
+  }
+  
+  app.enableCors({
+    origin: origins,
+    credentials: corsCredentials,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+    exposedHeaders: ['X-Total-Count', 'X-Page-Count'],
+    maxAge: 86400, // 24 hours
+  });
+  
+  console.log('=== CORS CONFIGURATION ===');
+  console.log('Origins:', origins);
+  console.log('Credentials:', corsCredentials);
+  console.log('==========================');
+  
+  const port = configService.get<number>('APP_PORT') || 3000;
 
   const config = new DocumentBuilder()
     .setTitle('AhmadCodes.com')

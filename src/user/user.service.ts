@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 import { User, UserRole, Permission } from './entities/user.entity';
 import { CreateUserDto, UpdateUserDto } from '../auth/dto/auth.dto';
 import * as bcrypt from 'bcryptjs';
@@ -10,6 +11,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private configService: ConfigService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -108,7 +110,11 @@ export class UserService {
   }
 
   async createDefaultAdmin(): Promise<User> {
-    const adminEmail = 'admin@example.com';
+    const adminEmail = this.configService.get<string>('ADMIN_EMAIL') || 'admin@example.com';
+    const adminPassword = this.configService.get<string>('ADMIN_PASSWORD') || 'admin123';
+    const adminFirstName = this.configService.get<string>('ADMIN_FIRST_NAME') || 'Admin';
+    const adminLastName = this.configService.get<string>('ADMIN_LAST_NAME') || 'User';
+
     const existingAdmin = await this.userRepository.findOne({
       where: { email: adminEmail },
     });
@@ -117,18 +123,19 @@ export class UserService {
       return existingAdmin;
     }
 
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
     const admin = this.userRepository.create({
       email: adminEmail,
-      firstName: 'Admin',
-      lastName: 'User',
+      firstName: adminFirstName,
+      lastName: adminLastName,
       password: hashedPassword,
       role: UserRole.ADMIN,
       permissions: Object.values(Permission),
       isActive: true,
     });
 
+    console.log(`Creating default admin user: ${adminEmail}`);
     return this.userRepository.save(admin);
   }
 } 
