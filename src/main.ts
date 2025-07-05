@@ -24,6 +24,57 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   
+  // Add comprehensive request logging middleware
+  app.use((req, res, next) => {
+    const timestamp = new Date().toISOString();
+    const method = req.method;
+    const url = req.url;
+    const origin = req.headers.origin;
+    const userAgent = req.headers['user-agent'];
+    const referer = req.headers.referer;
+    
+    console.log(`\n=== INCOMING REQUEST [${timestamp}] ===`);
+    console.log(`Method: ${method}`);
+    console.log(`URL: ${url}`);
+    console.log(`Origin: ${origin || 'NO ORIGIN'}`);
+    console.log(`User-Agent: ${userAgent || 'NO USER AGENT'}`);
+    console.log(`Referer: ${referer || 'NO REFERER'}`);
+    console.log(`Host: ${req.headers.host || 'NO HOST'}`);
+    
+    // Log all headers for debugging
+    console.log('Headers:');
+    Object.keys(req.headers).forEach(key => {
+      console.log(`  ${key}: ${req.headers[key]}`);
+    });
+    
+    // Special logging for OPTIONS (preflight) requests
+    if (method === 'OPTIONS') {
+      console.log('🚨 PREFLIGHT OPTIONS REQUEST DETECTED');
+      console.log(`Access-Control-Request-Method: ${req.headers['access-control-request-method'] || 'NOT SET'}`);
+      console.log(`Access-Control-Request-Headers: ${req.headers['access-control-request-headers'] || 'NOT SET'}`);
+    }
+    
+    console.log('===============================\n');
+    
+    // Log response headers after they're set
+    const originalSend = res.send;
+    res.send = function(body) {
+      console.log(`\n=== RESPONSE [${timestamp}] ===`);
+      console.log(`Status: ${res.statusCode}`);
+      console.log(`Method: ${method} ${url}`);
+      console.log(`Origin: ${origin || 'NO ORIGIN'}`);
+      console.log('Response Headers:');
+      Object.keys(res.getHeaders()).forEach(key => {
+        console.log(`  ${key}: ${res.getHeaders()[key]}`);
+      });
+      console.log('============================\n');
+      
+      return originalSend.call(this, body);
+    };
+    
+    next();
+  });
+  
   // Configure CORS
   const corsOrigin = configService.get<string>('CORS_ORIGIN');
   const corsCredentials = configService.get<string>('CORS_CREDENTIALS') === 'true';
@@ -41,28 +92,40 @@ async function bootstrap() {
   // Enhanced CORS configuration for bolt.new compatibility
   app.enableCors({
     origin: (origin, callback) => {
+      console.log(`\n🔍 CORS Origin Check: "${origin}"`);
+      
       // Allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true);
+      if (!origin) {
+        console.log('✅ CORS: Allowing request with no origin');
+        return callback(null, true);
+      }
       
       // If origins is true, allow all
-      if (origins === true) return callback(null, true);
+      if (origins === true) {
+        console.log('✅ CORS: Allowing all origins (origins=true)');
+        return callback(null, true);
+      }
       
       // Check if origin is in allowed list
       if (Array.isArray(origins)) {
         // Special handling for bolt.new variations
         if (origin.includes('bolt.new') || origin.includes('stackblitz.com')) {
+          console.log('✅ CORS: Allowing bolt.new/stackblitz origin');
           return callback(null, true);
         }
         
         if (origins.includes(origin)) {
+          console.log('✅ CORS: Origin found in allowed list');
           return callback(null, true);
         }
         
         // Log rejected origins for debugging
-        console.log(`CORS: Rejected origin: ${origin}`);
-        return callback(new Error('Not allowed by CORS'));
+        console.log(`❌ CORS: Rejected origin: ${origin}`);
+        console.log('Allowed origins:', origins);
+        return callback(new Error(`Origin ${origin} not allowed by CORS`));
       }
       
+      console.log('✅ CORS: Default allow');
       return callback(null, true);
     },
     credentials: corsCredentials,
