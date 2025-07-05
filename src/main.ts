@@ -22,37 +22,11 @@ async function bootstrap() {
   // Enhanced Swagger documentation
   const config = new DocumentBuilder()
     .setTitle('AhmadCodes.com API')
-    .setDescription(`
-      ## AhmadCodes.com Backend API
-      
-      This API provides endpoints for managing articles, user authentication, and user management.
-      
-      ### Features
-      - **Authentication**: JWT-based authentication system
-      - **User Management**: Role-based access control (Admin, Editor, User)
-      - **Article Management**: CRUD operations for articles
-      - **Permission System**: Fine-grained permissions for different operations
-      
-      ### Getting Started
-      1. Register a new account or use the default admin credentials
-      2. Login to receive a JWT token
-      3. Include the token in the Authorization header: \`Bearer <token>\`
-      
-      ### Default Admin Credentials
-      - Email: \`admin@example.com\`
-      - Password: \`admin123\`
-      
-      **Note**: Change these credentials in production!
-    `)
     .setVersion('1.0.0')
     .setContact(
       'Ahmad Codes',
       'https://ahmadcodes.com',
       'contact@ahmadcodes.com'
-    )
-    .setLicense(
-      'MIT',
-      'https://opensource.org/licenses/MIT'
     )
     .addServer('http://localhost:3000', 'Development server')
     .addServer('https://api.ahmadcodes.com', 'Production server')
