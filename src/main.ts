@@ -2,10 +2,25 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  
+  // Global validation pipe
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+    transformOptions: {
+      enableImplicitConversion: true,
+    },
+  }));
+
+  // Global exception filter
+  app.useGlobalFilters(new HttpExceptionFilter());
   
   // Simple CORS configuration
   const corsOrigin = configService.get<string>('CORS_ORIGIN') || '*';
@@ -56,6 +71,12 @@ async function bootstrap() {
       docExpansion: 'none',
       filter: true,
       showRequestDuration: true,
+      urls: [
+        {
+          url: '/api-json',
+          name: 'OpenAPI JSON',
+        },
+      ],
     },
     customSiteTitle: 'AhmadCodes.com API Documentation',
     customCss: `
