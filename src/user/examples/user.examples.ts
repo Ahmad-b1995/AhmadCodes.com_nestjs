@@ -9,8 +9,8 @@ export const UserExamples = {
         password: 'securepassword123',
         firstName: 'New',
         lastName: 'Admin',
-        role: 'admin'
-      }
+        role: 'admin',
+      },
     },
     editor: {
       summary: 'Create editor user',
@@ -20,9 +20,9 @@ export const UserExamples = {
         password: 'securepassword123',
         firstName: 'Content',
         lastName: 'Editor',
-        role: 'editor'
-      }
-    }
+        role: 'editor',
+      },
+    },
   },
 
   // Update profile examples
@@ -32,9 +32,9 @@ export const UserExamples = {
       description: 'Update user profile with new name',
       value: {
         firstName: 'Updated',
-        lastName: 'Name'
-      }
-    }
+        lastName: 'Name',
+      },
+    },
   },
 
   // Update user examples
@@ -46,9 +46,9 @@ export const UserExamples = {
         firstName: 'Updated',
         lastName: 'User',
         role: 'editor',
-        isActive: true
-      }
-    }
+        isActive: true,
+      },
+    },
   },
 
   // Change password examples
@@ -58,10 +58,10 @@ export const UserExamples = {
       description: 'Change user password with current password verification',
       value: {
         currentPassword: 'oldpassword123',
-        newPassword: 'newpassword123'
-      }
-    }
-  }
+        newPassword: 'newpassword123',
+      },
+    },
+  },
 };
 
 export const UserResponses = {
@@ -80,9 +80,9 @@ export const UserResponses = {
         permissions: { type: 'array', items: { type: 'string' } },
         isActive: { type: 'boolean', example: true },
         createdAt: { type: 'string', format: 'date-time' },
-        updatedAt: { type: 'string', format: 'date-time' }
-      }
-    }
+        updatedAt: { type: 'string', format: 'date-time' },
+      },
+    },
   },
 
   // Get all users response
@@ -102,10 +102,10 @@ export const UserResponses = {
           permissions: { type: 'array', items: { type: 'string' } },
           isActive: { type: 'boolean', example: true },
           createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' }
-        }
-      }
-    }
+          updatedAt: { type: 'string', format: 'date-time' },
+        },
+      },
+    },
   },
 
   // Get user profile response
@@ -123,9 +123,9 @@ export const UserResponses = {
         permissions: { type: 'array', items: { type: 'string' } },
         isActive: { type: 'boolean', example: true },
         createdAt: { type: 'string', format: 'date-time' },
-        updatedAt: { type: 'string', format: 'date-time' }
-      }
-    }
+        updatedAt: { type: 'string', format: 'date-time' },
+      },
+    },
   },
 
   // Get user by ID response
@@ -143,9 +143,9 @@ export const UserResponses = {
         permissions: { type: 'array', items: { type: 'string' } },
         isActive: { type: 'boolean', example: true },
         createdAt: { type: 'string', format: 'date-time' },
-        updatedAt: { type: 'string', format: 'date-time' }
-      }
-    }
+        updatedAt: { type: 'string', format: 'date-time' },
+      },
+    },
   },
 
   // Update profile response
@@ -162,9 +162,9 @@ export const UserResponses = {
         role: { type: 'string', example: 'admin' },
         permissions: { type: 'array', items: { type: 'string' } },
         isActive: { type: 'boolean', example: true },
-        updatedAt: { type: 'string', format: 'date-time' }
-      }
-    }
+        updatedAt: { type: 'string', format: 'date-time' },
+      },
+    },
   },
 
   // Update user response
@@ -181,9 +181,9 @@ export const UserResponses = {
         role: { type: 'string', example: 'editor' },
         permissions: { type: 'array', items: { type: 'string' } },
         isActive: { type: 'boolean', example: true },
-        updatedAt: { type: 'string', format: 'date-time' }
-      }
-    }
+        updatedAt: { type: 'string', format: 'date-time' },
+      },
+    },
   },
 
   // Change password response
@@ -193,9 +193,9 @@ export const UserResponses = {
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string', example: 'Password changed successfully' }
-      }
-    }
+        message: { type: 'string', example: 'Password changed successfully' },
+      },
+    },
   },
 
   // Profile update body schema
@@ -205,8 +205,8 @@ export const UserResponses = {
       type: 'object',
       properties: {
         firstName: { type: 'string', example: 'Updated' },
-        lastName: { type: 'string', example: 'Name' }
-      }
-    }
-  }
-}; 
+        lastName: { type: 'string', example: 'Name' },
+      },
+    },
+  },
+};

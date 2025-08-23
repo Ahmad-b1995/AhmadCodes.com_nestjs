@@ -38,7 +38,7 @@ export class ArticleService {
     Object.assign(article, updateArticle);
     return this.articleRepository.save(article);
   }
-  
+
   async remove(id: number): Promise<void> {
     const article = await this.findOne(id);
     await this.articleRepository.remove(article);

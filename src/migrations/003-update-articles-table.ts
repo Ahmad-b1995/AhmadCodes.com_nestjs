@@ -6,16 +6,16 @@ export class UpdateArticlesTable1640000000003 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Check if articles table exists
     const table = await queryRunner.getTable('articles');
-    
+
     if (table) {
       // If table exists, check if it has the old schema (author column)
       const authorColumn = table.findColumnByName('author');
       const imageColumn = table.findColumnByName('image');
-      
+
       if (authorColumn && !imageColumn) {
         // Table has old schema, drop and recreate with new schema
         await queryRunner.dropTable('articles');
-        
+
         // Create new table with updated schema
         await queryRunner.createTable(
           new Table({
@@ -90,7 +90,7 @@ export class UpdateArticlesTable1640000000003 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop the table and recreate with old schema
     await queryRunner.dropTable('articles');
-    
+
     await queryRunner.createTable(
       new Table({
         name: 'articles',
@@ -124,4 +124,4 @@ export class UpdateArticlesTable1640000000003 implements MigrationInterface {
       true,
     );
   }
-} 
+}

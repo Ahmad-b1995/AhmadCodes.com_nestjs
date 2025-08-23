@@ -1,16 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
-import { 
-  ApiTags, 
-  ApiOperation, 
-  ApiResponse, 
-  ApiBody, 
-  ApiBearerAuth, 
-  ApiUnauthorizedResponse, 
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+  ApiUnauthorizedResponse,
   ApiBadRequestResponse,
   ApiParam,
   ApiNoContentResponse,
   ApiForbiddenResponse,
-  ApiNotFoundResponse
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -34,27 +45,32 @@ export class ArticleController {
   @Roles(UserRole.ADMIN, UserRole.EDITOR)
   @Permissions(Permission.CREATE_ARTICLES)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create a new article',
-    description: 'Create a new article. Only admins and editors with CREATE_ARTICLES permission can create articles.'
+    description:
+      'Create a new article. Only admins and editors with CREATE_ARTICLES permission can create articles.',
   })
   @ApiBody({
     type: CreateArticleDto,
     description: 'Article creation data',
-    examples: ArticleExamples.createArticleExamples
+    examples: ArticleExamples.createArticleExamples,
   })
   @ApiResponse(ArticleResponses.createArticleResponse)
   @ApiBadRequestResponse({ description: 'Validation error' })
   @ApiUnauthorizedResponse({ description: 'JWT token missing or invalid' })
   @ApiForbiddenResponse({ description: 'Insufficient permissions' })
-  create(@Body() createArticleDto: CreateArticleDto, @CurrentUser() user: User) {
+  create(
+    @Body() createArticleDto: CreateArticleDto,
+    @CurrentUser() user: User,
+  ) {
     return this.articleService.create(createArticleDto);
   }
 
   @Get()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get all articles',
-    description: 'Retrieve a list of all published articles. No authentication required for public access.'
+    description:
+      'Retrieve a list of all published articles. No authentication required for public access.',
   })
   @ApiResponse(ArticleResponses.getAllArticlesResponse)
   findAll() {
@@ -62,11 +78,17 @@ export class ArticleController {
   }
 
   @Get(':id')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get article by ID',
-    description: 'Retrieve a specific article by its ID. Returns full content for published articles.'
+    description:
+      'Retrieve a specific article by its ID. Returns full content for published articles.',
   })
-  @ApiParam({ name: 'id', description: 'Article ID', type: 'number', example: 1 })
+  @ApiParam({
+    name: 'id',
+    description: 'Article ID',
+    type: 'number',
+    example: 1,
+  })
   @ApiResponse(ArticleResponses.getArticleByIdResponse)
   @ApiNotFoundResponse({ description: 'Article not found' })
   findOne(@Param('id') id: string) {
@@ -78,15 +100,21 @@ export class ArticleController {
   @Roles(UserRole.ADMIN, UserRole.EDITOR)
   @Permissions(Permission.UPDATE_ARTICLES)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Update article by ID',
-    description: 'Update a specific article by its ID. Only admins and editors with UPDATE_ARTICLES permission can update articles.'
+    description:
+      'Update a specific article by its ID. Only admins and editors with UPDATE_ARTICLES permission can update articles.',
   })
-  @ApiParam({ name: 'id', description: 'Article ID', type: 'number', example: 1 })
+  @ApiParam({
+    name: 'id',
+    description: 'Article ID',
+    type: 'number',
+    example: 1,
+  })
   @ApiBody({
     type: UpdateArticleDto,
     description: 'Article update data',
-    examples: ArticleExamples.updateArticleExamples
+    examples: ArticleExamples.updateArticleExamples,
   })
   @ApiResponse(ArticleResponses.updateArticleResponse)
   @ApiBadRequestResponse({ description: 'Validation error' })
@@ -103,11 +131,17 @@ export class ArticleController {
   @Permissions(Permission.DELETE_ARTICLES)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Delete article by ID',
-    description: 'Delete a specific article by its ID. Only admins with DELETE_ARTICLES permission can delete articles.'
+    description:
+      'Delete a specific article by its ID. Only admins with DELETE_ARTICLES permission can delete articles.',
   })
-  @ApiParam({ name: 'id', description: 'Article ID', type: 'number', example: 1 })
+  @ApiParam({
+    name: 'id',
+    description: 'Article ID',
+    type: 'number',
+    example: 1,
+  })
   @ApiNoContentResponse({ description: 'Article deleted successfully' })
   @ApiNotFoundResponse({ description: 'Article not found' })
   @ApiUnauthorizedResponse({ description: 'JWT token missing or invalid' })

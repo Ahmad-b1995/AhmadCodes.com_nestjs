@@ -6,17 +6,17 @@ export const AuthExamples = {
       description: 'Login with default admin credentials',
       value: {
         email: 'admin@example.com',
-        password: 'admin123'
-      }
+        password: 'admin123',
+      },
     },
     user: {
       summary: 'Regular user login',
       description: 'Login with regular user credentials',
       value: {
         email: 'user@example.com',
-        password: 'password123'
-      }
-    }
+        password: 'password123',
+      },
+    },
   },
 
   // Register examples
@@ -28,10 +28,10 @@ export const AuthExamples = {
         email: 'newuser@example.com',
         password: 'password123',
         firstName: 'John',
-        lastName: 'Doe'
-      }
-    }
-  }
+        lastName: 'Doe',
+      },
+    },
+  },
 };
 
 export const AuthResponses = {
@@ -45,7 +45,7 @@ export const AuthResponses = {
         access_token: {
           type: 'string',
           description: 'JWT access token',
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
         },
         user: {
           type: 'object',
@@ -55,11 +55,11 @@ export const AuthResponses = {
             firstName: { type: 'string', example: 'Admin' },
             lastName: { type: 'string', example: 'User' },
             role: { type: 'string', example: 'admin' },
-            permissions: { type: 'array', items: { type: 'string' } }
-          }
-        }
-      }
-    }
+            permissions: { type: 'array', items: { type: 'string' } },
+          },
+        },
+      },
+    },
   },
 
   // Register response
@@ -72,7 +72,7 @@ export const AuthResponses = {
         access_token: {
           type: 'string',
           description: 'JWT access token',
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
         },
         user: {
           type: 'object',
@@ -82,11 +82,11 @@ export const AuthResponses = {
             firstName: { type: 'string', example: 'John' },
             lastName: { type: 'string', example: 'Doe' },
             role: { type: 'string', example: 'user' },
-            permissions: { type: 'array', items: { type: 'string' } }
-          }
-        }
-      }
-    }
+            permissions: { type: 'array', items: { type: 'string' } },
+          },
+        },
+      },
+    },
   },
 
   // Profile response
@@ -101,14 +101,20 @@ export const AuthResponses = {
         firstName: { type: 'string', example: 'Admin' },
         lastName: { type: 'string', example: 'User' },
         role: { type: 'string', example: 'admin' },
-        permissions: { 
-          type: 'array', 
+        permissions: {
+          type: 'array',
           items: { type: 'string' },
-          example: ['create_articles', 'read_articles', 'update_articles', 'delete_articles', 'manage_users']
+          example: [
+            'create_articles',
+            'read_articles',
+            'update_articles',
+            'delete_articles',
+            'manage_users',
+          ],
         },
-        isActive: { type: 'boolean', example: true }
-      }
-    }
+        isActive: { type: 'boolean', example: true },
+      },
+    },
   },
 
   // Logout response
@@ -118,8 +124,8 @@ export const AuthResponses = {
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string', example: 'Logged out successfully' }
-      }
-    }
-  }
-}; 
+        message: { type: 'string', example: 'Logged out successfully' },
+      },
+    },
+  },
+};

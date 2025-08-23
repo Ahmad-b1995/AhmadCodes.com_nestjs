@@ -1,4 +1,13 @@
-import { IsEmail, IsString, MinLength, IsEnum, IsArray, IsOptional, IsBoolean, IsDate } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  MinLength,
+  IsEnum,
+  IsArray,
+  IsOptional,
+  IsBoolean,
+  IsDate,
+} from 'class-validator';
 import { UserRole, Permission } from '../../user/entities/user.entity';
 
 export class LoginDto {
@@ -101,4 +110,4 @@ export class AuthResponseDto {
     permissions: Permission[];
     isActive: boolean;
   };
-} 
+}

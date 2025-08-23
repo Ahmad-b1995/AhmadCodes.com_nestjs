@@ -33,4 +33,4 @@ import { PermissionsGuard } from './guards/permissions.guard';
   ],
   exports: [AuthService, JwtAuthGuard, RolesGuard, PermissionsGuard],
 })
-export class AuthModule {} 
+export class AuthModule {}

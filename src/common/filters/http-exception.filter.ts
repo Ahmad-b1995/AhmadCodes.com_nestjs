@@ -27,14 +27,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      
+
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
-      } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+      } else if (
+        typeof exceptionResponse === 'object' &&
+        exceptionResponse !== null
+      ) {
         const responseObj = exceptionResponse as any;
         message = responseObj.message || responseObj.error || exception.message;
         error = responseObj.error || exception.name;
-        
+
         // Handle validation errors with detailed messages
         if (Array.isArray(responseObj.message)) {
           const validationErrors = responseObj.message;
@@ -45,25 +48,31 @@ export class HttpExceptionFilter implements ExceptionFilter {
       // Handle database errors
       status = HttpStatus.BAD_REQUEST;
       error = 'Database Error';
-      
+
       const dbError = exception as any;
-      
+
       // Handle specific database constraint errors
-      if (dbError.code === '23502') { // NOT NULL constraint
+      if (dbError.code === '23502') {
+        // NOT NULL constraint
         const columnName = dbError.column || 'required field';
         if (columnName === 'image') {
-          message = 'Article image is required. Please provide both alt text and image source URL.';
+          message =
+            'Article image is required. Please provide both alt text and image source URL.';
         } else {
           message = `${columnName} is required and cannot be empty.`;
         }
-      } else if (dbError.code === '23505') { // UNIQUE constraint
+      } else if (dbError.code === '23505') {
+        // UNIQUE constraint
         message = 'A record with this information already exists';
-      } else if (dbError.code === '23503') { // FOREIGN KEY constraint
+      } else if (dbError.code === '23503') {
+        // FOREIGN KEY constraint
         message = 'Referenced record does not exist';
-      } else if (dbError.code === '42703') { // Column does not exist
+      } else if (dbError.code === '42703') {
+        // Column does not exist
         message = 'Database schema error. Please contact support.';
         status = HttpStatus.INTERNAL_SERVER_ERROR;
-      } else if (dbError.code === '22P02') { // Invalid JSON
+      } else if (dbError.code === '22P02') {
+        // Invalid JSON
         message = 'Invalid data format provided';
       } else {
         message = 'Database operation failed';
@@ -93,7 +102,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   private formatValidationErrors(errors: string[]): string {
     return errors
-      .map(error => {
+      .map((error) => {
         // Convert technical validation messages to user-friendly ones
         if (error.includes('image')) {
           if (error.includes('should not be empty')) {
@@ -119,4 +128,4 @@ export class HttpExceptionFilter implements ExceptionFilter {
       })
       .join(', ');
   }
-} 
+}

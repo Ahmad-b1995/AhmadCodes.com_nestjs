@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
@@ -30,7 +34,8 @@ export class UserService {
       password: hashedPassword,
       role: createUserDto.role || UserRole.USER,
       permissions: createUserDto.permissions || [],
-      isActive: createUserDto.isActive !== undefined ? createUserDto.isActive : true,
+      isActive:
+        createUserDto.isActive !== undefined ? createUserDto.isActive : true,
     });
 
     return this.userRepository.save(user);
@@ -38,14 +43,34 @@ export class UserService {
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find({
-      select: ['id', 'email', 'firstName', 'lastName', 'role', 'permissions', 'isActive', 'createdAt', 'updatedAt'],
+      select: [
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'role',
+        'permissions',
+        'isActive',
+        'createdAt',
+        'updatedAt',
+      ],
     });
   }
 
   async findById(id: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },
-      select: ['id', 'email', 'firstName', 'lastName', 'role', 'permissions', 'isActive', 'createdAt', 'updatedAt'],
+      select: [
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'role',
+        'permissions',
+        'isActive',
+        'createdAt',
+        'updatedAt',
+      ],
     });
 
     if (!user) {
@@ -74,7 +99,11 @@ export class UserService {
     await this.userRepository.remove(user);
   }
 
-  async changePassword(id: number, currentPassword: string, newPassword: string): Promise<void> {
+  async changePassword(
+    id: number,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { id },
     });
@@ -83,7 +112,10 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    const isCurrentPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password,
+    );
     if (!isCurrentPasswordValid) {
       throw new ConflictException('Current password is incorrect');
     }
@@ -96,7 +128,7 @@ export class UserService {
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.findByEmail(email);
-    
+
     if (!user) {
       return null;
     }
@@ -110,10 +142,14 @@ export class UserService {
   }
 
   async createDefaultAdmin(): Promise<User> {
-    const adminEmail = this.configService.get<string>('ADMIN_EMAIL') || 'admin@example.com';
-    const adminPassword = this.configService.get<string>('ADMIN_PASSWORD') || 'admin123';
-    const adminFirstName = this.configService.get<string>('ADMIN_FIRST_NAME') || 'Admin';
-    const adminLastName = this.configService.get<string>('ADMIN_LAST_NAME') || 'User';
+    const adminEmail =
+      this.configService.get<string>('ADMIN_EMAIL') || 'admin@example.com';
+    const adminPassword =
+      this.configService.get<string>('ADMIN_PASSWORD') || 'admin123';
+    const adminFirstName =
+      this.configService.get<string>('ADMIN_FIRST_NAME') || 'Admin';
+    const adminLastName =
+      this.configService.get<string>('ADMIN_LAST_NAME') || 'User';
 
     const existingAdmin = await this.userRepository.findOne({
       where: { email: adminEmail },
@@ -138,4 +174,4 @@ export class UserService {
     console.log(`Creating default admin user: ${adminEmail}`);
     return this.userRepository.save(admin);
   }
-} 
+}

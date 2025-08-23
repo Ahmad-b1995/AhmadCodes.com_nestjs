@@ -8,32 +8,38 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  
+
   // Global validation pipe
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-    transformOptions: {
-      enableImplicitConversion: true,
-    },
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
 
   // Global exception filter
   app.useGlobalFilters(new HttpExceptionFilter());
-  
+
   // Simple CORS configuration
   const corsOrigin = configService.get<string>('CORS_ORIGIN') || '*';
-  const corsCredentials = configService.get<string>('CORS_CREDENTIALS') === 'true';
-  
+  const corsCredentials =
+    configService.get<string>('CORS_CREDENTIALS') === 'true';
+
   app.enableCors({
-    origin: corsOrigin === '*' ? true : corsOrigin.split(',').map(origin => origin.trim()),
+    origin:
+      corsOrigin === '*'
+        ? true
+        : corsOrigin.split(',').map((origin) => origin.trim()),
     credentials: corsCredentials,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin'],
     exposedHeaders: ['Authorization'],
   });
-  
+
   // Enhanced Swagger documentation
   const config = new DocumentBuilder()
     .setTitle('AhmadCodes.com API')
@@ -41,7 +47,7 @@ async function bootstrap() {
     .setContact(
       'Ahmad Codes',
       'https://ahmadcodes.com',
-      'contact@ahmadcodes.com'
+      'contact@ahmadcodes.com',
     )
     .addServer('http://localhost:3000', 'Development server')
     .addServer('https://api.ahmadcodes.com', 'Production server')
@@ -54,14 +60,14 @@ async function bootstrap() {
         description: 'Enter JWT token',
         in: 'header',
       },
-      'JWT-auth'
+      'JWT-auth',
     )
     .addTag('Authentication', 'Authentication and user management endpoints')
     .addTag('Users', 'User management operations (Admin/Editor only)')
     .addTag('Articles', 'Article management operations')
     .addTag('Health', 'Application health check endpoints')
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: {

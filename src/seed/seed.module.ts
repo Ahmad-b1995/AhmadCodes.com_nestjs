@@ -7,4 +7,4 @@ import { UserModule } from '../user/user.module';
   providers: [SeedService],
   exports: [SeedService],
 })
-export class SeedModule {} 
+export class SeedModule {}

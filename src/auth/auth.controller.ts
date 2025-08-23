@@ -1,5 +1,21 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiUnauthorizedResponse, ApiBadRequestResponse } from '@nestjs/swagger';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Get,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
@@ -14,17 +30,20 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'User login',
-    description: 'Authenticate user with email and password. Returns JWT token for subsequent requests.'
+    description:
+      'Authenticate user with email and password. Returns JWT token for subsequent requests.',
   })
   @ApiBody({
     type: LoginDto,
     description: 'User login credentials',
-    examples: AuthExamples.loginExamples
+    examples: AuthExamples.loginExamples,
   })
   @ApiResponse(AuthResponses.loginResponse)
-  @ApiBadRequestResponse({ description: 'Invalid credentials or validation error' })
+  @ApiBadRequestResponse({
+    description: 'Invalid credentials or validation error',
+  })
   @ApiUnauthorizedResponse({ description: 'Invalid email or password' })
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
@@ -32,17 +51,20 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'User registration',
-    description: 'Register a new user account. Creates a new user with USER role by default.'
+    description:
+      'Register a new user account. Creates a new user with USER role by default.',
   })
   @ApiBody({
     type: RegisterDto,
     description: 'User registration data',
-    examples: AuthExamples.registerExamples
+    examples: AuthExamples.registerExamples,
   })
   @ApiResponse(AuthResponses.registerResponse)
-  @ApiBadRequestResponse({ description: 'Validation error or email already exists' })
+  @ApiBadRequestResponse({
+    description: 'Validation error or email already exists',
+  })
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
@@ -50,9 +72,9 @@ export class AuthController {
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get user profile',
-    description: 'Retrieve the authenticated user\'s profile information.'
+    description: "Retrieve the authenticated user's profile information.",
   })
   @ApiResponse(AuthResponses.profileResponse)
   @ApiUnauthorizedResponse({ description: 'JWT token missing or invalid' })
@@ -72,9 +94,10 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'User logout',
-    description: 'Logout the authenticated user. Since JWT is stateless, the client should remove the token from storage.'
+    description:
+      'Logout the authenticated user. Since JWT is stateless, the client should remove the token from storage.',
   })
   @ApiResponse(AuthResponses.logoutResponse)
   @ApiUnauthorizedResponse({ description: 'JWT token missing or invalid' })
@@ -83,4 +106,4 @@ export class AuthController {
     // by removing the token from storage
     return { message: 'Logged out successfully' };
   }
-} 
+}

@@ -10,15 +10,15 @@ export class SeedService {
   async seedDatabase() {
     try {
       this.logger.log('Starting database seeding...');
-      
+
       // Create default admin user
       const admin = await this.userService.createDefaultAdmin();
       this.logger.log(`Default admin user created/verified: ${admin.email}`);
-      
+
       this.logger.log('Database seeding completed successfully');
     } catch (error) {
       this.logger.error('Error during database seeding:', error);
       throw error;
     }
   }
-} 
+}
