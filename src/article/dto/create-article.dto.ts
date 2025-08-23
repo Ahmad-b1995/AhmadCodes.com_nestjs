@@ -3,9 +3,12 @@ import {
   IsString,
   IsObject,
   ValidateNested,
+  IsOptional,
+  IsBoolean,
+  IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class ArticleImageDto {
   @ApiProperty({
@@ -42,6 +45,14 @@ export class CreateArticleDto {
   @IsString()
   content: string;
 
+  @ApiPropertyOptional({
+    example: 'Learn how to build scalable server-side applications with NestJS...',
+    description: 'Article excerpt for previews',
+  })
+  @IsOptional()
+  @IsString()
+  excerpt?: string;
+
   @ApiProperty({
     type: ArticleImageDto,
     description: 'Article image with alt text and source URL',
@@ -51,4 +62,30 @@ export class CreateArticleDto {
   @ValidateNested()
   @Type(() => ArticleImageDto)
   image: ArticleImageDto;
+
+  @ApiPropertyOptional({
+    example: false,
+    description: 'Whether the article is published',
+    default: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  published?: boolean;
+
+  @ApiPropertyOptional({
+    example: 'Learn NestJS framework, build scalable APIs, TypeScript development',
+    description: 'SEO meta description',
+  })
+  @IsOptional()
+  @IsString()
+  metaDescription?: string;
+
+  @ApiPropertyOptional({
+    example: ['nestjs', 'typescript', 'nodejs', 'backend'],
+    description: 'Article tags',
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
 }

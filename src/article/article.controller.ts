@@ -77,6 +77,24 @@ export class ArticleController {
     return this.articleService.findAll();
   }
 
+  @Get('slug/:slug')
+  @ApiOperation({
+    summary: 'Get article by slug',
+    description:
+      'Retrieve a specific published article by its slug. Returns full content.',
+  })
+  @ApiParam({
+    name: 'slug',
+    description: 'Article slug',
+    type: 'string',
+    example: 'getting-started-with-nestjs',
+  })
+  @ApiResponse(ArticleResponses.getArticleByIdResponse)
+  @ApiNotFoundResponse({ description: 'Article not found' })
+  findBySlug(@Param('slug') slug: string) {
+    return this.articleService.findBySlug(slug);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: 'Get article by ID',
